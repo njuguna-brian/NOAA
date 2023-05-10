@@ -4,6 +4,10 @@
 # NOAA
 
 <!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.com/njuguna-brian/NOAA.svg?branch=main)](https://travis-ci.com/njuguna-brian/NOAA)
+[![R-CMD-check](https://github.com/njuguna-brian/NOAA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/njuguna-brian/NOAA/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The package NOAA provides convenient and efficient tools for accessing,

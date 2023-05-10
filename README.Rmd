@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 # NOAA
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.com/njuguna-brian/NOAA.svg?branch=main)](https://travis-ci.com/njuguna-brian/NOAA)
+[![R-CMD-check](https://github.com/njuguna-brian/NOAA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/njuguna-brian/NOAA/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The package NOAA provides convenient and efficient tools for accessing, cleaning, and visualizing earthquake data from the National Oceanic and Atmospheric Administration (NOAA) database. The package aims to simplify the process of working with earthquake data, allowing users to quickly explore and analyze patterns and trends in seismic activity.
