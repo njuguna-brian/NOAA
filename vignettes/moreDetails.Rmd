@@ -5,6 +5,8 @@ vignette: >
   %\VignetteIndexEntry{moreDetails}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+import:
+  - readr::read_delim
 ---
 
 ```{r, include = FALSE}
@@ -47,7 +49,7 @@ The eq_clean_data function is an important part of the NOAA package as it allows
 
 ```{r}
 path <- system.file("extdata/earthquakes.txt", package = "NOAA")
-earthquake_data <- readr::read_delim(path, delim = "\t")
+earthquake_data <-  readr::read_delim(path, delim = "\t")
 earthquake_clean <- eq_clean_data(earthquake_data)
 head(earthquake_clean)
 ```

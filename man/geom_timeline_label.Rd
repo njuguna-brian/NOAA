@@ -45,9 +45,16 @@ Aesthetics are x, which is the date of the earthquake, and tags which is the col
 }
 \examples{
 \dontrun{
-library(ggplot2)
-
-# Create earthquake data
-data <- quakes[order(quakes$mag, decreasing = TRUE), ]
-}
+earthquake_clean \%>\%
+filter(country == "JAPAN") \%>\%
+ggplot() +
+geom_timeline(aes(
+x = date,
+ size = magnitude,
+  color = deaths,
+  fill = deaths
+  )) +
+  theme_minimal() +
+  theme(axis.line = element_line()) +
+  geom_timeline_label(aes(date, tags = location))}
 }
