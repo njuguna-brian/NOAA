@@ -1,0 +1,155 @@
+%>% ---
+title: "moreDetails"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{moreDetails}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(NOAA)
+library(ggplot2)
+library(dplyr)
+```
+
+
+Introduction to the NOAA package
+=================================
+
+Welcome to the NOAA package! This package provides access to earthquake data collected by the National Oceanic and Atmospheric Administration (NOAA) for about 4000 years. The package includes functions for cleaning the data, as well as several example visualizations and analyses.
+
+In this vignette, I will walk through the basics of using the NOAA package, including:
+
+- Exploring the data using summary statistics and visualizations
+- Performing basic analyses on the data
+
+We assume that you have already installed the NOAA package and any required dependencies. If you have not done so, please refer to the package documentation for installation instructions.
+
+Let's get started!
+
+## 1. eq_clean_data()
+
+The eq_clean_data function is a part of the NOAA package and is designed to clean raw earthquake data obtained from the National Oceanic and Atmospheric Administration (NOAA) database. The function takes a raw data frame as its input and returns a clean data frame with the following columns: date, latitude, longitude, depth, magnitude, country, location, house_damaged, house_destroyed, and deaths.
+
+The eq_clean_data function performs several cleaning operations on the input data. It first removes rows with missing latitude values and unused columns. It then creates a new date column by combining the year, month, day, hour, minute, and second columns and converting them to the Date class. It also converts the latitude and longitude columns to numeric data types and cleans the location column by removing the country name (including the colon) and converting the location names to title case. The function then extracts the country names from the cleaned location column and removes any remaining missing values.
+
+The function uses several packages, including dplyr, lubridate, stringr, stats, and magrittr. The dplyr package is used for data manipulation, lubridate is used for handling date and time data, stringr is used for string manipulation, stats is used for removing missing values, and magrittr is used for piping operations.
+
+The eq_clean_data function is an important part of the NOAA package as it allows users to easily clean and analyze raw earthquake data obtained from the NOAA database. An example is the following
+
+```{r}
+path <- system.file("extdata/earthquakes.txt", package = "NOAA")
+earthquake_data <- readr::read_delim(path, delim = "\t")
+earthquake_clean <- eq_clean_data(earthquake_data)
+head(earthquake_clean)
+```
+
+## 2. GeomTimeline/geom_timeline()
+
+This is a custom geom for ggplot2 called GeomTimeline that allows you to plot a timeline of data points where the x-axis represents time, and the y-axis is fixed at y=0. You can customize the aesthetics of the plot with optional parameters such as size, color, alpha, shape, stroke, and fill. The default values for aesthetics are size=1, color='grey50', alpha=0.5, shape=19, stroke=0.5, and fill=NA.
+
+The function geom_timeline is a wrapper for layer() that specifies geom = GeomTimeline and sets the parameters for na.rm, mapping, data, stat, position, show.legend, and inherit.aes.
+
+The GeomTimeline object is defined as a ggproto object that inherits from the Geom object. It requires an aesthetic mapping for x and has default aesthetics for y, size, color, alpha, shape, stroke, and fill. The draw_key parameter specifies the key glyph to use for the plot legend, and draw_panel defines the function to draw the plot panel.
+
+Overall, this custom geom is useful for visualizing data with a temporal dimension, such as earthquake data. An example is as follows;
+
+```{r}
+earthquake_clean %>%
+  ggplot() +
+  geom_timeline(aes(
+    x = date,
+    size = magnitude,
+    color = deaths,
+    fill = deaths
+  ))
+```
+
+You can also customize further by adding other ggplot2 aesthetics such as theme_minimal() and such.
+
+```{r}
+earthquake_clean %>%
+  ggplot() +
+  geom_timeline(aes(
+    x = date,
+    size = magnitude,
+    color = deaths,
+    fill = deaths
+  )) +
+  theme_minimal() +
+  theme(axis.line = element_line())
+```
+
+## GeomTimeLineLable/geom_timeline_label()
+
+This is a custom geom called GeomTimeLineLabel that adds annotations/label to a plot of earthquake data. It creates a vertical line for each data point and attaches a text annotation to each line. The x and tags aesthetics are required, where x is the date of the earthquake and tags is the column name from which annotations will be obtained.
+
+The function geom_timeline_label is the actual geom that is used to add the annotations to the plot. It takes several arguments including mapping, data, na.rm, show.legend, stat, position, inherit.aes, and .... The function creates a layer for the GeomTimeLineLabel ggproto object and returns a ggplot2 plot with a timeline label.
+
+The GeomTimeLineLabel ggproto object is the actual object that does the work of adding the annotations to the plot. It has several components including required_aes, default_aes, draw_key, and draw_panel. The draw_panel component does the actual work of creating the vertical lines and text annotations for each data point. It uses the grid package to create segmentsGrob and textGrob objects for each line and annotation, respectively. An example is as follows;
+
+```{r}
+earthquake_clean %>%
+  filter(country == "JAPAN") %>% 
+  ggplot() +
+  geom_timeline(aes(
+    x = date,
+    size = magnitude,
+    color = deaths,
+    fill = deaths
+  )) +
+  theme_minimal() +
+  theme(axis.line = element_line()) +
+  geom_timeline_label(aes(date, tags = location))
+```
+
+## eq_map()
+
+The eq_map() function takes a cleaned earthquake dataset and an annotation column as inputs and creates a leaflet map with circle markers for each earthquake location. The annotation column is used to display additional information about each earthquake in the popup text when the user hovers over a marker.
+
+The eq_map() function creates a popup text string based on the input annotation column and passes it to the popup argument in the addCircleMarkers() function of the leaflet package. This creates a leaflet map with circle markers for each earthquake location and displays the annotation information in the popup text when the user hovers over a marker.
+
+The arguments for the functions are data which is a data frame containing earthquake data that has been cleaned using the eq_clean_data() function and annot_col which is a string representing the name of the column in the data data frame that should be used for annotation in the popup text. An example is as follows;
+
+```{r}
+earthquake_clean %>%
+  filter(country == "MEXICO" & lubridate::year(date) >= 2000) %>%
+  eq_map(annot_col = "date")
+```
+
+
+## eq_create_label()
+
+The eq_create_label function creates popup labels for the map visualization of earthquake data. It takes in a data frame of earthquake data and returns a character vector of popup labels. The function uses conditional statements to check for missing values in the location, magnitude, and deaths columns and formats the popup text accordingly. The function then concatenates the formatted text into a single label using the paste0() function and returns the label.
+
+In the example below, this function is used to add annotations to a map of earthquakes in Mexico since the year 2000. The resulting popup_text column is then used as the annot_col argument in the eq_map() function to display the popup labels on the map.
+
+```{r}
+earthquake_clean %>%
+  filter(country == "MEXICO" & lubridate::year(date) >= 2000) %>%
+  mutate(popup_text = eq_create_label(.)) %>%
+  eq_map(annot_col = "popup_text")
+```
+
+
+Conclusion
+=================================
+
+In conclusion, this vignette provided an overview of the functions included in the NOAA package for working with earthquake data. These functions cover a range of tasks, from cleaning and filtering data to creating interactive visualizations.
+
+The eq_clean_data() function is useful for removing invalid data and creating a consistent format, while eq_location_clean() standardizes location data. The eq_map() function creates an interactive map visualization of earthquake data, with options for customizing the map style and annotation.
+
+Additionally, the eq_create_label() function can be used to generate popup labels for the map visualization, providing more detailed information about each earthquake.
+
+Overall, the NOAA package provides a useful set of tools for working with earthquake data, and I hope that these functions will be helpful for researchers and analysts in this field.
+
+
+

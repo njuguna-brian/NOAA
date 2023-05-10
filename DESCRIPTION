@@ -1,0 +1,26 @@
+Package: NOAA
+Title: NOAA: Clean and Visualize NOAA Natural Hazard Data 
+Version: 1.0.0
+Authors@R: 
+    person("Brian", "Njuguna", , "briannjuguna133@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: NOAA is an R package that provides functions for downloading, cleaning, and visualizing earthquake data from the National Oceanic and Atmospheric Administration (NOAA). The package includes functions for downloading earthquake data from the NOAA website, cleaning and processing the data to make it ready for analysis, and visualizing the data on maps. With NOAAdata, users can easily explore and analyze earthquake data to gain insights into seismic activity and trends over time.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    ggplot2,
+    leaflet,
+    lubridate,
+    stringr,
+    magrittr
+Depends:
+    grid,
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

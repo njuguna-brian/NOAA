@@ -1,0 +1,43 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# NOAA
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The package NOAA provides convenient and efficient tools for accessing, cleaning, and visualizing earthquake data from the National Oceanic and Atmospheric Administration (NOAA) database. The package aims to simplify the process of working with earthquake data, allowing users to quickly explore and analyze patterns and trends in seismic activity.
+
+## Installation
+
+You can install the development version of NOAA from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("njuguna-brian/NOAA")
+```
+
+## Example
+
+An example of its usage is as follows;
+
+```{r example}
+library(NOAA)
+path <- system.file("extdata/earthquakes.txt", package = "NOAA")
+earthquake_data <- readr::read_delim(path, delim = "\t")
+earthquake_clean <- eq_clean_data(earthquake_data)
+head(earthquake_clean)
+```
+
